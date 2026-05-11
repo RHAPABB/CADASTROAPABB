@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APABB — Cadastro de Funcionário CLT</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --azul: #1B3A8C;
+    --azul-m: #2E5BB8;
+    --azul-l: #4A90D9;
+    --azul-ll: #E8F0FB;
+    --azul-lll: #F2F6FD;
+    --amarelo: #F5A800;
+    --amarelo-l: #FFF8E6;
+    --borda: #C5D3EE;
+    --texto: #1A2B4A;
+    --label: #4A6490;
+    --cinza: #F4F7FC;
+    --branco: #FFFFFF;
+  }
+
+  html { font-size: 15px; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #EEF3FB;
+    min-height: 100vh;
+    color: var(--texto);
+    padding: 0 0 4rem;
+  }
+
+  /* ── TOPO APABB ── */
+  .top-strip {
+    background: var(--azul);
+    height: 5px;
+  }
+
+  header {
+    background: var(--branco);
+    box-shadow: 0 2px 12px rgba(27,58,140,0.10);
+    padding: 1.4rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-svg {
+    flex-shrink: 0;
+  }
+
+  .header-text h1 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--azul);
+    line-height: 1.2;
+  }
+  .header-text p {
+    font-size: 0.78rem;
+    color: var(--label);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .header-badge {
+    margin-left: auto;
+    background: var(--amarelo-l);
+    border: 1px solid var(--amarelo);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #8a5c00;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 820px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    background: var(--branco);
+    border-radius: 14px;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 1px 8px rgba(27,58,140,0.07);
+    margin-bottom: 1.2rem;
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--label);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .progress-labels span.active { color: var(--azul); }
+  .progress-track {
+    height: 6px;
+    background: var(--azul-ll);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--azul) 0%, var(--azul-l) 100%);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 12.5%;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--branco);
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(27,58,140,0.08);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-m) 100%);
+    padding: 1.2rem 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .card-header-icon {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .card-header h2 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .card-header p {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 1px;
+    font-weight: 400;
+  }
+  .card-step-num {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.85);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .card-body {
+    padding: 1.6rem 1.8rem;
+  }
+
+  /* ── SECTION ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── GRID ── */
+  .grid { display: grid; gap: 1rem; margin-bottom: 1rem; }
+  .g1 { grid-template-columns: 1fr; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  .g4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .g-2-1 { grid-template-columns: 2fr 1fr; }
+  .g-3-1 { grid-template-columns: 3fr 1fr; }
+  .g-1-1-2 { grid-template-columns: 1fr 1fr 2fr; }
+  .g-2-1-1 { grid-template-columns: 2fr 1fr 1fr; }
+
+  /* ── FIELD ── */
+  .field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .field label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--label);
+  }
+  .field label .req { color: var(--amarelo); margin-left: 2px; }
+
+  .field input,
+  .field select,
+  .field textarea {
+    height: 42px;
+    padding: 0 0.9rem;
+    border: 1.5px solid var(--borda);
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    color: var(--texto);
+    background: var(--cinza);
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .field textarea { height: 80px; resize: vertical; padding-top: 0.6rem; }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--azul-l);
+    background: var(--branco);
+    box-shadow: 0 0 0 3px rgba(74,144,217,0.15);
+  }
+
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A6490' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-color: var(--cinza);
+    padding-right: 2.2rem;
+    cursor: pointer;
+  }
+
+  /* ── RADIO / CHECK ── */
+  .check-group { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.3rem; }
+  .check-item {
+    display: flex; align-items: center; gap: 0.5rem;
+    cursor: pointer; padding: 0.5rem 1rem;
+    border: 1.5px solid var(--borda); border-radius: 10px;
+    background: var(--cinza); transition: all 0.2s;
+    font-size: 0.88rem; font-weight: 600; color: var(--texto);
+  }
+  .check-item:hover { border-color: var(--azul-l); background: var(--azul-lll); }
+  .check-item input { width: 16px; height: 16px; accent-color: var(--azul); flex-shrink: 0; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--azul-lll);
+    border-left: 3px solid var(--azul-l);
+    border-radius: 0 10px 10px 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: var(--azul-m);
+    margin: 0.5rem 0 1rem;
+    line-height: 1.5;
+  }
+
+  /* ── NAV ── */
+  .nav-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 1.8rem;
+    border-top: 1px solid var(--azul-lll);
+    gap: 1rem;
+    background: var(--cinza);
+  }
+  .btn {
+    padding: 0.7rem 1.8rem; border-radius: 10px;
+    font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; border: none; transition: all 0.2s; letter-spacing: 0.02em;
+  }
+  .btn-outline {
+    background: var(--branco); border: 1.5px solid var(--borda); color: var(--label);
+  }
+  .btn-outline:hover { border-color: var(--azul-l); color: var(--azul); }
+  .btn-primary {
+    background: var(--azul); color: #fff;
+    box-shadow: 0 3px 10px rgba(27,58,140,0.3);
+  }
+  .btn-primary:hover { background: var(--azul-m); transform: translateY(-1px); }
+  .btn-success {
+    background: linear-gradient(135deg, #1A7A4A, #1E9558);
+    color: #fff; box-shadow: 0 3px 10px rgba(26,122,74,0.3);
+  }
+  .btn-success:hover { transform: translateY(-1px); }
+  .step-indicator { font-size: 0.78rem; color: var(--label); font-weight: 600; }
+
+  /* ── SUCCESS ── */
+  #success-screen { display: none; text-align: center; padding: 3rem 1.5rem; }
+  .success-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: #E6F7EF;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem; font-size: 2.2rem;
+  }
+  #success-screen h2 {
+    font-size: 1.6rem; font-weight: 800; color: var(--azul); margin-bottom: 0.5rem;
+  }
+  #success-screen p { color: var(--label); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  .summary-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.7rem; margin: 1rem 0 1.5rem; text-align: left;
+  }
+  .summary-item {
+    background: var(--cinza); border-radius: 10px; padding: 0.7rem 0.9rem;
+    border: 1px solid var(--borda);
+  }
+  .summary-item .s-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--label); }
+  .summary-item .s-value { font-size: 0.9rem; color: var(--texto); margin-top: 0.15rem; font-weight: 600; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 2rem 1rem;
+    font-size: 0.75rem; color: var(--label);
+  }
+  footer strong { color: var(--azul); }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--azul-ll); margin: 1.2rem 0; }
+
+  /* ── PRINT ── */
+  .print-btn {
+    background: var(--branco); border: 1.5px solid var(--borda); color: var(--azul-m);
+    padding: 0.6rem 1.4rem; border-radius: 10px;
+    font-family: 'Nunito', sans-serif; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .print-btn:hover { border-color: var(--azul-l); background: var(--azul-lll); }
+
+  @media (max-width: 600px) {
+    header { padding: 1rem; gap: 0.8rem; }
+    .header-badge { display: none; }
+    .container { padding: 0 0.6rem; }
+    .card-body, .nav-row { padding-left: 1rem; padding-right: 1rem; }
+    .g2,.g3,.g4,.g-2-1,.g-3-1,.g-1-1-2,.g-2-1-1 { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .card-header { padding: 1rem; }
+  }
+
+  @media print {
+    body { background: white; padding: 0; }
+    header { position: static; box-shadow: none; }
+    .nav-row, .progress-wrap, .print-btn, footer { display: none !important; }
+    .section { display: block !important; }
+    .card { box-shadow: none; page-break-inside: avoid; margin-bottom: 1rem; }
+    .top-strip { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-strip"></div>
+
+<header>
+  <img src="data:image/png;base64,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G8LGtaPQDZRyqJrGDKi0+5p/Sc2N1FiKmBzmSqUL2NyfHlKMpay1NbjmL2O3dz4HbMc1zftDlus57SXVxgY2zZd+HkdahFa8I2vbBNxbsc5rvdLSeR3V+lx2PkusvSUaz7UY2bM6IF7R8Hbbr2niisQuhnjZLG8bOY9oII+IKzOqpSUkZUcLBp2zmM/BQ1DFnK+Nyxxk9Kxdv4iu4C5U8TeSN8e7v1jGAkgOO7VdMhR07nMbqXUbcri8tLb0/NUZFRLXsZVDXOG4G5cSfXp0C2ZVq1asHgVa8UMQ+5G0AfkF5U8Zj6fi+yUa1fxXbyeFE1vGfjsOa2dZfBGvT82WLQWFrVsXWy09OJuTt143TSmMcbG8DQ2MHqGtAA2VtsOqSdtsUETYTabp+R8xDAXDeZgbxH/q2WdrrwMDy8NaHHqdua06nLbN9nCRqTSMuK1Li8LjMrkalK9iL7Zb+PkIbbfkI3kgu4ufCXcLwW/aHnsvLJZHEHTuZltGJzcdrOMzlzdzA42I+Fx9OTuq2u/H0HXW33UazrbBsJjGOMD+1tuvcwxODt42+99r3Rz+ak6yznBp03juaszuU05a1VlqklnHY3A45ws5+1I5rXX5+AFsHq5jWgOd6+60feWysLdrZHE1L9MbV7ETZYfd29xw3by8uS93Vq7vtQRn5tC9QNht5KOck1hG0U02dkRFGbhERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQH//2Q==" alt="Logo APABB" style="height:60px;width:auto;flex-shrink:0;">
+
+  <div class="header-text">
+    <h1>Cadastro de Novo Funcionário</h1>
+    <p>Associação de Pais, Amigos e Pessoas com Deficiência — CLT</p>
+  </div>
+  <div class="header-badge">Cód. 04-05-04-42</div>
+</header>
+
+<div class="container">
+
+  <!-- PROGRESSO -->
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span id="pl-label">Identificação</span>
+      <span id="pl-step" class="active">Passo 1 de 8</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- ══ SEÇÃO 1: IDENTIFICAÇÃO ══ -->
+  <div class="section active" id="sec1">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">👤</div>
+        <div>
+          <h2>Identificação</h2>
+          <p>Dados pessoais do funcionário</p>
+        </div>
+        <div class="card-step-num">1 / 8</div>
+      </div>
+      <div class="card-body">
+        <div class="grid g2">
+          <div class="field">
+            <label>Local de Trabalho <span class="req">*</span></label>
+            <input type="text" id="local_trabalho" placeholder="Ex.: Sede Central — São Paulo">
+          </div>
+          <div class="field">
+            <label>Núcleo Regional</label>
+            <input type="text" id="nucleo_regional" placeholder="Ex.: Núcleo Sul">
+          </div>
+        </div>
+        <div class="grid g1">
+          <div class="field">
+            <label>Nome Completo <span class="req">*</span></label>
+            <input type="text" id="nome" placeholder="Nome completo sem abreviações">
+          </div>
+        </div>
+        <div class="grid g2">
+          <div class="field">
+            <label>Escolaridade</label>
+            <select id="escolaridade">
+              <option value="">Selecione</option>
+              <option>Ensino Fundamental Incompleto</option>
+              <option>Ensino Fundamental Completo</option>
+              <option>Ensino Médio Incompleto</option>
+              <option>Ensino Médio Completo</option>
+              <option>Ensino Superior Incompleto</option>
+              <option>Ensino Superior Completo</option>
+              <option>Pós-graduação / MBA</option>
+              <option>Mestrado</option>
+              <option>Doutorado</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Formação / Curso</label>
+            <input type="text" id="formacao" placeholder="Ex.: Administração de Empresas">
+          </div>
+        </div>
+        <div class="grid g4">
+          <div class="field">
+            <label>Sexo</label>
+            <select id="sexo">
+              <option value="">Selecione</option>
+              <option>Masculino</option>
+              <option>Feminino</option>
+              <option>Outro</option>
+              <option>Prefiro não informar</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tipo Sanguíneo</label>
+            <select id="tipo_sanguineo">
+              <option value="">Selecione</option>
+              <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Nacionalidade</label>
+            <input type="text" id="nacionalidade" value="Brasileira">
+          </div>
+          <div class="field">
+            <label>Estado Civil</label>
+            <select id="estado_civil">
+              <option value="">Selecione</option>
+              <option>Solteiro(a)</option>
+              <option>Casado(a)</option>
+              <option>Divorciado(a)</option>
+              <option>Viúvo(a)</option>
+              <option>União Estável</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid g2">
+          <div class="field">
+            <label>Data de Nascimento <span class="req">*</span></label>
+            <input type="date" id="data_nasc">
+          </div>
+          <div class="field">
+            <label>Local de Nascimento (Cidade / UF)</label>
+            <input type="text" id="local_nasc" placeholder="Ex.: São Paulo / SP">
+          </div>
+        </div>
+        <div class="grid g2">
+          <div class="field">
+            <label>Filiação — Nome da Mãe</label>
+            <input type="text" id="mae" placeholder="Nome completo da mãe">
+          </div>
+          <div class="field">
+            <label>Filiação — Nome do Pai</label>
+            <input type="text" id="pai" placeholder="Nome completo do pai">
+          </div>
+        </div>
+        <div class="grid g-2-1">
+          <div class="field">
+            <label>Cônjuge — Nome Completo</label>
+            <input type="text" id="conjuge" placeholder="Nome do cônjuge (se aplicável)">
+          </div>
+          <div class="field">
+            <label>Data de Nascimento do Cônjuge</label>
+            <input type="date" id="data_nasc_conjuge">
+          </div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <div></div>
+        <span class="step-indicator">Passo 1 de 8</span>
+        <button class="btn btn-primary" onclick="go(2)">Continuar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEÇÃO 2: ENDEREÇO ══ -->
+  <div class="section" id="sec2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">🏠</div>
+        <div>
+          <h2>Endereço Residencial</h2>
+          <p>Endereço atual de moradia</p>
+        </div>
+        <div class="card-step-num">2 / 8</div>
+      </div>
+      <div class="card-body">
+        <div class="grid g-3-1">
+          <div class="field">
+            <label>Logradouro (Rua / Avenida) <span class="req">*</span></label>
+            <input type="text" id="rua" placeholder="Ex.: Av. Paulista">
+          </div>
+          <div class="field">
+            <label>Número <span class="req">*</span></label>
+            <input type="text" id="numero" placeholder="Ex.: 1000">
+          </div>
+        </div>
+        <div class="grid g2">
+          <div class="field">
+            <label>Complemento</label>
+            <input type="text" id="complemento" placeholder="Apto, Bloco, Casa...">
+          </div>
+          <div class="field">
+            <label>Bairro <span class="req">*</span></label>
+            <input type="text" id="bairro" placeholder="Nome do bairro">
+          </div>
+        </div>
+        <div class="grid g4">
+          <div class="field" style="grid-column:span 2">
+            <label>Cidade <span class="req">*</span></label>
+            <input type="text" id="cidade" placeholder="Ex.: São Paulo">
+          </div>
+          <div class="field">
+            <label>UF</label>
+            <select id="uf">
+              <option value="">UF</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+              <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+              <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+              <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+              <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+              <option selected>SP</option><option>SE</option><option>TO</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>CEP <span class="req">*</span></label>
+            <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+          </div>
+        </div>
+        <div class="grid g3">
+          <div class="field">
+            <label>Telefone Residencial (DDD)</label>
+            <input type="tel" id="tel_res" placeholder="(11) 0000-0000">
+          </div>
+          <div class="field">
+            <label>Celular (DDD) <span class="req">*</span></label>
+            <input type="tel" id="celular" placeholder="(11) 00000-0000">
+          </div>
+          <div class="field">
+            <label>E-mail <span class="req">*</span></label>
+            <input type="email" id="email" placeholder="nome@email.com">
+          </div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="go(1)">← Voltar</button>
+        <span class="step-indicator">Passo 2 de 8</span>
+        <button class="btn btn-primary" onclick="go(3)">Continuar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEÇÃO 3: DEPENDENTES ══ -->
+  <div class="section" id="sec3">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">👨‍👩‍👧</div>
+        <div>
+          <h2>Dependentes</h2>
+          <p>Informações sobre dependentes declarados</p>
+        </div>
+        <div class="card-step-num">3 / 8</div>
+      </div>
+      <div class="card-body">
+        <div class="grid g2">
+          <div class="field">
+            <label>Dependentes do Imposto de Renda (qtd.)</label>
+            <input type="number" id="dep_ir" min="0" max="20" placeholder="0" value="0">
+          </div>
+          <div class="field">
+            <label>Dependentes Salário Família (filhos &lt; 14 anos)</label>
+            <input type="number" id="dep_sf" min="0" max="20" placeholder="0" value="0">
+          </div>
+        </div>
+        <div class="info-box">Para cada dependente declarado no IR, é necessário entregar documentação comprobatória ao RH da APABB.</div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="go(2)">← Voltar</button>
+        <span class="step-indicator">Passo 3 de 8</span>
+        <button class="btn btn-primary" onclick="go(4)">Continuar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEÇÃO 4: DADOS BANCÁRIOS ══ -->
+  <div class="section" id="sec4">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">🏦</div>
+        <div>
+          <h2>Dados Bancários</h2>
+          <p>Conta para depósito do salário</p>
+        </div>
+        <div class="card-step-num">4 / 8</div>
+      </div>
+      <div class="card-body">
+        <div class="grid g4">
+          <div class="field" style="grid-column:span 2">
+            <label>Banco <span class="req">*</span></label>
+            <select id="banco">
+              <option>Banco do Brasil (001)</option>
+              <option>Bradesco (237)</option>
+              <option>Itaú Unibanco (341)</option>
+              <option>Santander (033)</option>
+              <option>Caixa Econômica Federal (104)</option>
+              <option>Nubank (260)</option>
+              <option>Inter (077)</option>
+              <option>Sicredi (748)</option>
+              <option>Sicoob (756)</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Agência <span class="req">*</span></label>
+            <input type="text" id="agencia" placeholder="Ex.: 1234-5">
+          </div>
+          <div class="field">
+            <label>Conta Corrente <span class="req">*</span></label>
+            <input type="text" id="conta" placeholder="Ex.: 12345-6">
+          </div>
+        </div>
+        <div class="info-box">O pagamento é realizado via depósito em conta corrente. A conta deve estar em seu nome.</div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="go(3)">← Voltar</button>
+        <span class="step-indicator">Passo 4 de 8</span>
+        <button class="btn btn-primary" onclick="go(5)">Continuar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEÇÃO 5: DOCUMENTOS ══ -->
+  <div class="section" id="sec5">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">📄</div>
+        <div>
+          <h2>Documentos</h2>
+          <p>Carteira de trabalho, CPF e demais documentos</p>
+        </div>
+        <div class="card-step-num">5 / 8</div>
+      </div>
+      <div class="card-body">
+        <div class="grid g4">
+          <div class="field" style="grid-column:span 2">
+            <label>Nº Carteira de Trabalho (CTPS) <span class="req">*</span></label>
+            <input type="text" id="ctps_num" placeholder="Número da CTPS">
+          </div>
+          <div class="field">
+            <label>Série CTPS</label>
+            <input type="text" id="ctps_serie" placeholder="Ex.: 0001">
+          </div>
+          <div class="field">
+            <label>Estado de Emissão</label>
+            <select id="ctps_estado">
+              <option value="">UF</option>
+              <option>SP</option><option>RJ</option><option>MG</option><option>RS</option>
+              <option>PR</option><option>SC</option><option>BA</option><option>PE</option>
+              <option>CE</option><option>Outros</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid g3">
+          <div class="field">
+            <label>RG <span class="req">*</span></label>
+            <input type="text" id="rg" placeholder="00.000.000-0">
+          </div>
+          <div class="field">
+            <label>CPF <span class="req">*</span></label>
+            <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
+          </div>
+          <div class="field">
+            <label>PIS / PASEP <span class="req">*</span></label>
+            <input type="text" id="pis" placeholder="000.00000.00-0">
+          </div>
+        </div>
+        <div class="grid g3">
+          <div class="field">
+            <label>Título de Eleitor</label>
+            <input type="text" id="titulo" placeholder="Número do título">
+          </div>
+          <div class="field">
+            <label>Zona</label>
+            <input type="text" id="zona" placeholder="Zona eleitoral">
+          </div>
+          <div class="field">
+            <label>Seção</label>
+            <input type="text" id="secao" placeholder="Seção eleitoral">
+          </div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="go(4)">← Voltar</button>
+        <span class="step-indicator">Passo 5 de 8</span>
+        <button class="btn btn-primary" onclick="go(6)">Continuar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEÇÃO 6: CARGO ══ -->
+  <div class="section" id="sec6">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">💼</div>
+        <div>
+          <h2>Cargo e Remuneração</h2>
+          <p>Função, data de admissão e salário</p>
+        </div>
+        <div class="card-step-num">6 / 8</div>
+      </div>
+      <div class="card-body">
+        <div class="grid g2">
+          <div class="field">
+            <label>Cargo <span class="req">*</span></label>
+            <input type="text" id="cargo" placeholder="Ex.: Analista Administrativo">
+          </div>
+          <div class="field">
+            <label>Data de Admissão <span class="req">*</span></label>
+            <input type="date" id="data_registro">
+          </div>
+        </div>
+        <div class="grid g2">
+          <div class="field">
+            <label>Salário Bruto (R$) <span class="req">*</span></label>
+            <input type="text" id="salario" placeholder="Ex.: 3.500,00">
+          </div>
+          <div class="field">
+            <label>Horário de Trabalho</label>
+            <input type="text" id="horario" placeholder="Ex.: 08h00 – 17h00">
+          </div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="go(5)">← Voltar</button>
+        <span class="step-indicator">Passo 6 de 8</span>
+        <button class="btn btn-primary" onclick="go(7)">Continuar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEÇÃO 7: VALE TRANSPORTE ══ -->
+  <div class="section" id="sec7">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">🚌</div>
+        <div>
+          <h2>Vale Transporte</h2>
+          <p>Desconto de 6% na folha de pagamento</p>
+        </div>
+        <div class="card-step-num">7 / 8</div>
+      </div>
+      <div class="card-body">
+        <div class="field" style="margin-bottom:1.2rem">
+          <label>Deseja receber Vale Transporte? <span class="req">*</span></label>
+          <div class="check-group">
+            <label class="check-item">
+              <input type="radio" name="vt" id="vt_sim" value="sim" onchange="toggleVT(true)"> Sim — desconto de 6%
+            </label>
+            <label class="check-item">
+              <input type="radio" name="vt" id="vt_nao" value="nao" onchange="toggleVT(false)"> Não
+            </label>
+          </div>
+        </div>
+
+        <div id="vt_detalhes" style="display:none">
+          <div class="divider"></div>
+          <div class="grid g2">
+            <div class="field">
+              <label>Nº do Bilhete / Cartão</label>
+              <input type="text" id="bilhete" placeholder="Número do cartão de transporte">
+            </div>
+            <div class="field">
+              <label>Valor por Dia (R$)</label>
+              <input type="text" id="vt_valor" placeholder="Ex.: 9,70">
+            </div>
+          </div>
+          <div class="field" style="margin-top:0.5rem">
+            <label>Condução Utilizada</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" id="cond_onibus"> 🚌 Ônibus</label>
+              <label class="check-item"><input type="checkbox" id="cond_metro"> 🚇 Metrô</label>
+              <label class="check-item"><input type="checkbox" id="cond_integ"> 🔄 Integração Ônibus + Metrô/Trem</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="go(6)">← Voltar</button>
+        <span class="step-indicator">Passo 7 de 8</span>
+        <button class="btn btn-primary" onclick="go(8)">Continuar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEÇÃO 8: CONFIRMAÇÃO ══ -->
+  <div class="section" id="sec8">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">✅</div>
+        <div>
+          <h2>Seguro Desemprego &amp; Confirmação</h2>
+          <p>Última etapa antes de enviar</p>
+        </div>
+        <div class="card-step-num">8 / 8</div>
+      </div>
+      <div class="card-body">
+        <div class="field" style="margin-bottom:1.2rem">
+          <label>Está recebendo Seguro Desemprego? <span class="req">*</span></label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="sd" value="sim" onchange="toggleSD(true)"> Sim</label>
+            <label class="check-item"><input type="radio" name="sd" value="nao" onchange="toggleSD(false)"> Não</label>
+          </div>
+        </div>
+        <div id="sd_data" style="display:none;margin-bottom:1rem">
+          <div class="field" style="max-width:260px">
+            <label>Vigência até</label>
+            <input type="date" id="sd_ate">
+          </div>
+        </div>
+
+        <div class="info-box">
+          Ao enviar este formulário, confirmo que todas as informações são verdadeiras e me comprometo a entregar a documentação original ao RH da APABB em até 3 dias úteis.
+        </div>
+
+        <div class="grid g2" style="margin-top:1rem">
+          <div class="field">
+            <label>Local e Data <span class="req">*</span></label>
+            <input type="text" id="local_data" placeholder="Ex.: São Paulo, 11/05/2026">
+          </div>
+          <div class="field">
+            <label>Responsável pelo Cadastro (RH)</label>
+            <input type="text" id="responsavel" placeholder="Nome do responsável">
+          </div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="go(7)">← Voltar</button>
+        <span class="step-indicator">Passo 8 de 8</span>
+        <button class="btn btn-success" onclick="submit()">✓ Enviar Cadastro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SUCESSO ══ -->
+  <div id="success-screen">
+    <div class="card">
+      <div class="card-body">
+        <div class="success-icon">✅</div>
+        <h2>Cadastro Enviado!</h2>
+        <p id="success-name">Funcionário cadastrado com sucesso. O RH receberá os dados em breve.</p>
+        <div class="summary-grid" id="summary-grid"></div>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem">
+          <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar PDF</button>
+          <button class="btn btn-primary" onclick="resetForm()">+ Novo Cadastro</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  <strong>APABB</strong> — Associação de Pais, Amigos e Pessoas com Deficiência · "normal é ser feliz"<br>
+  <span>Formulário interno — Departamento de Recursos Humanos · Cód. 04-05-04-42</span>
+</footer>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 8;
+  const stepNames = ['Identificação','Endereço','Dependentes','Dados Bancários','Documentos','Cargo','Vale Transporte','Confirmação'];
+
+  function go(step) {
+    document.getElementById('sec' + currentStep).classList.remove('active');
+    currentStep = step;
+    document.getElementById('sec' + step).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    const pct = (currentStep / totalSteps) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('pl-label').textContent = stepNames[currentStep - 1];
+    document.getElementById('pl-step').textContent = 'Passo ' + currentStep + ' de ' + totalSteps;
+  }
+
+  function toggleVT(show) {
+    document.getElementById('vt_detalhes').style.display = show ? 'block' : 'none';
+  }
+
+  function toggleSD(show) {
+    document.getElementById('sd_data').style.display = show ? 'block' : 'none';
+  }
+
+  document.getElementById('cep').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,8);
+    e.target.value = v;
+  });
+
+  document.getElementById('cpf').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    v = v.replace(/(\d{3})(\d)/, '$1.$2');
+    v = v.replace(/(\d{3})(\d)/, '$1.$2');
+    v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    e.target.value = v;
+  });
+
+  function submit() {
+    const nome = document.getElementById('nome').value.trim();
+    if (!nome) { alert('Por favor, preencha o nome completo na seção 1.'); go(1); return; }
+
+    for (let i = 1; i <= totalSteps; i++) {
+      const s = document.getElementById('sec' + i);
+      if (s) s.classList.remove('active');
+    }
+
+    const vt = document.querySelector('input[name="vt"]:checked');
+    const cidade = (document.getElementById('cidade').value || '') + (document.getElementById('uf').value ? ' / ' + document.getElementById('uf').value : '');
+
+    const items = [
+      { l: 'Nome', v: document.getElementById('nome').value },
+      { l: 'Cargo', v: document.getElementById('cargo').value },
+      { l: 'Data de Admissão', v: document.getElementById('data_registro').value },
+      { l: 'Salário Bruto', v: document.getElementById('salario').value ? 'R$ ' + document.getElementById('salario').value : '' },
+      { l: 'CPF', v: document.getElementById('cpf').value },
+      { l: 'RG', v: document.getElementById('rg').value },
+      { l: 'Cidade / UF', v: cidade },
+      { l: 'Vale Transporte', v: vt ? (vt.value === 'sim' ? 'Sim' : 'Não') : '—' },
+    ];
+
+    const grid = document.getElementById('summary-grid');
+    grid.innerHTML = '';
+    items.forEach(item => {
+      if (item.v && item.v.trim()) {
+        grid.innerHTML += `<div class="summary-item"><div class="s-label">${item.l}</div><div class="s-value">${item.v}</div></div>`;
+      }
+    });
+
+    document.getElementById('success-name').textContent = nome + ' foi cadastrado(a) com sucesso na APABB.';
+    document.getElementById('success-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    document.getElementById('success-screen').style.display = 'none';
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else if (el.id === 'nacionalidade') el.value = 'Brasileira';
+      else if (el.id === 'uf') el.value = 'SP';
+      else el.value = '';
+    });
+    document.getElementById('vt_detalhes').style.display = 'none';
+    document.getElementById('sd_data').style.display = 'none';
+    go(1);
+  }
+</script>
+</body>
+</html>
