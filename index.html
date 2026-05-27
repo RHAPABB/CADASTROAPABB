@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APABB — Cadastro de Colaboradores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --azul:#1B3A8C;--azul-m:#2E5BB8;--azul-l:#E8EFFE;
+  --verde:#1A7A4A;--verde-l:#E6F7EF;
+  --amarelo:#F5A800;--amarelo-l:#FFF8E6;
+  --borda:#C5D3EE;--label:#4A6490;--texto:#1A2B4A;
+  --cinza:#F4F7FC;--cinza2:#E8EDF6;--branco:#fff;
+  --erro:#C0392B;--erro-l:#FDECEA;
+  --shadow:0 4px 24px rgba(27,58,140,.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:#EEF3FB;min-height:100vh;color:var(--texto);font-size:15px}
+
+/* ── TOP STRIP + HEADER ── */
+.top-strip{background:linear-gradient(90deg,#1B3A8C,#2E5BB8,#1A7A4A);height:5px}
+header{background:var(--branco);box-shadow:var(--shadow);padding:1rem 2rem;display:flex;align-items:center;gap:1.2rem;position:sticky;top:0;z-index:100}
+.logo-wrap img{height:56px;width:auto}
+.header-txt h1{font-size:.95rem;font-weight:800;color:var(--azul);line-height:1.3}
+.header-txt p{font-size:.72rem;color:var(--label);margin-top:2px}
+.header-badge{margin-left:auto;background:var(--azul-l);border:1px solid var(--borda);border-radius:20px;padding:5px 14px;font-size:.68rem;font-weight:700;color:var(--azul);white-space:nowrap}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#1B3A8C 0%,#2E5BB8 60%,#1A5C9C 100%);padding:3.5rem 2rem 3rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-inner{position:relative;max-width:680px;margin:0 auto}
+.hero-icon{width:72px;height:72px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.2rem}
+.hero h2{font-size:1.8rem;font-weight:900;color:#fff;line-height:1.2;margin-bottom:.6rem}
+.hero h2 span{color:#F5D98B}
+.hero p{font-size:.9rem;color:rgba(255,255,255,.80);line-height:1.6;max-width:520px;margin:0 auto 2rem}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-hero{padding:.75rem 1.8rem;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-hero-primary{background:#F5A800;color:#1A2B4A;box-shadow:0 4px 16px rgba(245,168,0,.35)}
+.btn-hero-primary:hover{background:#e09800;transform:translateY(-1px)}
+.btn-hero-outline{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+.btn-hero-outline:hover{background:rgba(255,255,255,.2)}
+.hero-note{font-size:.68rem;color:rgba(255,255,255,.55);margin-top:1.5rem}
+
+/* ── INFO CARD: DOCUMENTOS ── */
+#docs-section{background:var(--branco);border-top:4px solid var(--amarelo);max-width:820px;margin:2.5rem auto 0;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:none}
+.docs-header{background:var(--amarelo-l);padding:1.4rem 2rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid #edd57a}
+.docs-header-icon{width:44px;height:44px;background:var(--amarelo);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.docs-header h3{font-size:1rem;font-weight:800;color:#7A5200}
+.docs-header p{font-size:.78rem;color:#9A6800;margin-top:2px}
+.docs-body{padding:1.8rem 2rem}
+.docs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.doc-item{background:var(--cinza);border:1px solid var(--borda);border-radius:10px;padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.75rem}
+.doc-item .doc-num{width:26px;height:26px;background:var(--azul);color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;margin-top:1px}
+.doc-item .doc-info strong{display:block;font-size:.82rem;font-weight:700;color:var(--texto)}
+.doc-item .doc-info span{font-size:.73rem;color:var(--label);display:block;margin-top:2px}
+.doc-item.obrig .doc-num{background:var(--verde)}
+.docs-alert{background:#EFF6FF;border:1px solid #BFD8F7;border-radius:10px;padding:1rem 1.2rem;display:flex;gap:.8rem;align-items:flex-start}
+.docs-alert .icon{font-size:1.2rem;flex-shrink:0;margin-top:1px}
+.docs-alert p{font-size:.82rem;color:#1A4A7A;line-height:1.6}
+.docs-alert strong{color:var(--azul)}
+.docs-email{background:var(--verde-l);border:1px solid #99D6B8;border-radius:10px;padding:1rem 1.2rem;margin-top:1rem;display:flex;align-items:center;gap:.8rem}
+.docs-email .icon{font-size:1.3rem}
+.docs-email p{font-size:.82rem;color:#145A36;line-height:1.6}
+.docs-email strong{color:var(--verde);font-size:.88rem;display:block}
+
+/* ── PROGRESSO ── */
+#form-section{max-width:820px;margin:2.5rem auto 4rem;padding:0 1rem}
+.progress-wrap{background:var(--branco);border-radius:16px;padding:1.5rem 2rem;box-shadow:var(--shadow);margin-bottom:1.5rem;display:none}
+.progress-title{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--label);margin-bottom:1rem}
+.progress-steps{display:flex;align-items:center;gap:0}
+.step-item{display:flex;align-items:center;flex:1}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;transition:all .3s;border:2px solid var(--borda);background:var(--branco);color:var(--label)}
+.step-circle.active{background:var(--azul);border-color:var(--azul);color:#fff}
+.step-circle.done{background:var(--verde);border-color:var(--verde);color:#fff}
+.step-line{flex:1;height:2px;background:var(--borda);transition:background .3s}
+.step-line.done{background:var(--verde)}
+.step-label{font-size:.65rem;font-weight:700;color:var(--label);margin-top:.3rem;text-align:center;white-space:nowrap}
+.step-label.active{color:var(--azul)}
+.step-label.done{color:var(--verde)}
+.steps-labels{display:flex;margin-top:.4rem}
+.steps-labels > div{flex:1;text-align:center}
+.steps-labels > div:first-child{text-align:left}
+.steps-labels > div:last-child{text-align:right}
+
+/* ── FORMULÁRIO ── */
+.form-card{background:var(--branco);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:none}
+.form-step{display:none}
+.form-step.active{display:block}
+.form-card-header{background:linear-gradient(135deg,var(--azul),var(--azul-m));padding:1.2rem 2rem;display:flex;align-items:center;gap:1rem}
+.form-card-header .step-badge{background:rgba(255,255,255,.2);width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;color:#fff;flex-shrink:0}
+.form-card-header h3{color:#fff;font-size:.95rem;font-weight:800}
+.form-card-header p{color:rgba(255,255,255,.75);font-size:.73rem;margin-top:2px}
+.form-body{padding:2rem}
+.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fields-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.field-full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:.3rem}
+.field label{font-size:.67rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--label)}
+.field label .req{color:var(--erro);margin-left:2px}
+.field input,.field select,.field textarea{padding:.65rem .9rem;border:1.5px solid var(--borda);border-radius:10px;font-family:'Nunito',sans-serif;font-size:.88rem;color:var(--texto);background:var(--cinza);outline:none;transition:all .2s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--azul-m);background:var(--branco);box-shadow:0 0 0 3px rgba(46,91,184,.12)}
+.field input.err,.field select.err,.field textarea.err{border-color:var(--erro);background:var(--erro-l)}
+.field-hint{font-size:.68rem;color:var(--label);margin-top:2px}
+.field-err{font-size:.68rem;color:var(--erro);margin-top:2px;display:none}
+.field textarea{resize:vertical;min-height:80px;line-height:1.5}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A6490' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.5rem}
+
+.section-divider{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--label);margin:1.5rem 0 1rem;display:flex;align-items:center;gap:.6rem}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--borda)}
+.section-divider::before{display:none}
+
+/* VT toggle */
+.radio-group{display:flex;gap:.7rem}
+.radio-opt{flex:1;border:1.5px solid var(--borda);border-radius:10px;padding:.65rem 1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;transition:all .2s;background:var(--cinza)}
+.radio-opt input[type=radio]{accent-color:var(--azul);width:16px;height:16px}
+.radio-opt:has(input:checked){border-color:var(--azul);background:var(--azul-l)}
+.radio-opt span{font-size:.82rem;font-weight:700;color:var(--texto)}
+.vt-extra{display:none;margin-top:.8rem;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Dependente item */
+.dep-list{display:flex;flex-direction:column;gap:.6rem;margin-top:.6rem}
+.dep-item{background:var(--cinza);border:1px solid var(--borda);border-radius:10px;padding:.9rem 1rem}
+.dep-item-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem}
+.dep-item-header span{font-size:.75rem;font-weight:700;color:var(--azul);flex:1}
+.dep-item-header button{background:var(--erro-l);border:none;border-radius:6px;color:var(--erro);font-size:.7rem;font-weight:700;padding:.25rem .6rem;cursor:pointer}
+.dep-fields{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+
+/* Botões de navegação */
+.form-nav{display:flex;gap:.8rem;padding:1.5rem 2rem;border-top:1px solid var(--borda);background:var(--cinza)}
+.btn-nav{padding:.7rem 1.6rem;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-nav-primary{background:var(--azul);color:#fff;margin-left:auto}
+.btn-nav-primary:hover{background:var(--azul-m)}
+.btn-nav-secondary{background:var(--branco);border:1.5px solid var(--borda);color:var(--label)}
+.btn-nav-secondary:hover{border-color:var(--azul-m);color:var(--azul)}
+.btn-add-dep{background:var(--verde-l);border:2px solid #66BB6A;color:#1B5E20;padding:.55rem 1.2rem;border-radius:9px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
+.btn-add-dep:hover{background:#C8E6C9}
+
+/* ── SUCESSO ── */
+#success-screen{display:none;max-width:820px;margin:2.5rem auto 4rem;padding:0 1rem}
+.success-card{background:var(--branco);border-radius:16px;box-shadow:var(--shadow);padding:3rem 2.5rem;text-align:center}
+.success-icon{width:80px;height:80px;background:var(--verde-l);border:3px solid #99D6B8;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.5rem}
+.success-card h3{font-size:1.4rem;font-weight:800;color:var(--verde);margin-bottom:.6rem}
+.success-card p{font-size:.9rem;color:var(--label);line-height:1.7;max-width:480px;margin:0 auto 2rem}
+.success-steps{display:grid;grid-template-columns:1fr 1fr;gap:1rem;text-align:left;margin-bottom:2rem}
+.success-step{background:var(--cinza);border:1px solid var(--borda);border-radius:10px;padding:1rem;display:flex;gap:.75rem}
+.success-step .num{width:28px;height:28px;background:var(--azul);color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0}
+.success-step strong{font-size:.82rem;display:block;color:var(--texto)}
+.success-step span{font-size:.74rem;color:var(--label)}
+.email-box{background:var(--verde-l);border:1.5px solid #99D6B8;border-radius:10px;padding:1rem 1.5rem;display:inline-flex;align-items:center;gap:.8rem}
+.email-box .icon{font-size:1.3rem}
+.email-box strong{color:var(--verde);font-size:.9rem;display:block}
+.email-box span{font-size:.8rem;color:#145A36}
+
+/* ── FOOTER ── */
+footer{background:var(--azul);padding:2rem;text-align:center}
+footer p{color:rgba(255,255,255,.55);font-size:.75rem;line-height:1.7}
+footer strong{color:rgba(255,255,255,.85)}
+
+@media print{
+  header{position:relative!important;box-shadow:none}
+  .top-strip{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .hero,.hero-actions,.btn-hero,#docs-section,.progress-wrap,#form-section .form-card .form-nav,footer{display:none!important}
+  #form-section{display:block!important;margin:0;padding:0;max-width:100%}
+  .form-card{display:block!important;box-shadow:none;border:1px solid #ccc}
+  .form-step{display:block!important;page-break-inside:avoid}
+  .form-card-header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #success-screen{display:none!important}
+  .field input,.field select,.field textarea{border:1px solid #999;background:#fff!important}
+  body{background:#fff!important;font-size:12px}
+  .fields-grid{grid-template-columns:1fr 1fr}
+  .section-divider{margin:.8rem 0 .4rem}
+}
+@media(max-width:640px){
+  header{padding:.75rem 1rem;gap:.8rem}
+  .logo-wrap img{height:44px}
+  .hero h2{font-size:1.35rem}
+  .docs-grid,.fields-grid,.fields-grid.col3,.success-steps{grid-template-columns:1fr}
+  .form-body{padding:1.2rem}
+  .form-nav{padding:1.2rem}
+  .hero{padding:2.5rem 1rem 2rem}
+  .docs-body{padding:1.2rem}
+  #docs-section{margin:1.5rem .8rem 0}
+  #form-section{margin:1.5rem auto 3rem;padding:0 .8rem}
+  #success-screen{padding:0 .8rem}
+  .dep-fields{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="top-strip"></div>
+
+<header>
+  <div class="logo-wrap">
+    <!-- Substitua pelo caminho correto da logo -->
+    <img src="data:image/png;base64,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G8LGtaPQDZRyqJrGDKi0+5p/Sc2N1FiKmBzmSqUL2NyfHlKMpay1NbjmL2O3dz4HbMc1zftDlus57SXVxgY2zZd+HkdahFa8I2vbBNxbsc5rvdLSeR3V+lx2PkusvSUaz7UY2bM6IF7R8Hbbr2niisQuhnjZLG8bOY9oII+IKzOqpSUkZUcLBp2zmM/BQ1DFnK+Nyxxk9Kxdv4iu4C5U8TeSN8e7v1jGAkgOO7VdMhR07nMbqXUbcri8tLb0/NUZFRLXsZVDXOG4G5cSfXp0C2ZVq1asHgVa8UMQ+5G0AfkF5U8Zj6fi+yUa1fxXbyeFE1vGfjsOa2dZfBGvT82WLQWFrVsXWy09OJuTt143TSmMcbG8DQ2MHqGtAA2VtsOqSdtsUETYTabp+R8xDAXDeZgbxH/q2WdrrwMDy8NaHHqdua06nLbN9nCRqTSMuK1Li8LjMrkalK9iL7Zb+PkIbbfkI3kgu4ufCXcLwW/aHnsvLJZHEHTuZltGJzcdrOMzlzdzA42I+Fx9OTuq2u/H0HXW33UazrbBsJjGOMD+1tuvcwxODt42+99r3Rz+ak6yznBp03juaszuU05a1VlqklnHY3A45ws5+1I5rXX5+AFsHq5jWgOd6+60feWysLdrZHE1L9MbV7ETZYfd29xw3by8uS93Vq7vtQRn5tC9QNht5KOck1hG0U02dkRFGbhERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQH//2Q==" alt="Logo APABB" style="height:56px;width:auto">
+  </div>
+  <div class="header-txt">
+    <h1>APABB — Recursos Humanos</h1>
+    <p>Associação de Pais, Amigos e Pessoas com Deficiência · Banco do Brasil</p>
+  </div>
+  <div class="header-badge">Departamento de RH</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-icon">👤</div>
+    <h2>Cadastro de <span>Novos Colaboradores</span></h2>
+    <p>Formulário institucional para formalização do vínculo empregatício. Preencha todas as informações com atenção e envie os documentos solicitados por e-mail.</p>
+    <div class="hero-actions">
+      <button class="btn-hero btn-hero-primary" onclick="mostrarDocumentos()">📋 Ver documentos necessários</button>
+      <button class="btn-hero btn-hero-outline" onclick="iniciarCadastro()">✏️ Iniciar cadastro</button>
+    </div>
+    <p class="hero-note">CLT · Regime de trabalho com carteira assinada</p>
+  </div>
+</div>
+
+<!-- DOCUMENTOS -->
+<div id="docs-section">
+  <div class="docs-header">
+    <div class="docs-header-icon">📎</div>
+    <div>
+      <h3>Documentos obrigatórios para admissão</h3>
+      <p>Reúna todos os itens abaixo antes de iniciar o preenchimento</p>
+    </div>
+  </div>
+  <div class="docs-body">
+    <div class="docs-grid">
+      <div class="doc-item obrig"><div class="doc-num">01</div><div class="doc-info"><strong>RG (Frente e Verso)</strong><span>Documento de identidade — cópia legível</span></div></div>
+      <div class="doc-item obrig"><div class="doc-num">02</div><div class="doc-info"><strong>CPF</strong><span>Cadastro de Pessoa Física ou CNH com CPF</span></div></div>
+      <div class="doc-item obrig"><div class="doc-num">03</div><div class="doc-info"><strong>CTPS Digital</strong><span>Carteira de Trabalho — número, série e UF</span></div></div>
+      <div class="doc-item obrig"><div class="doc-num">04</div><div class="doc-info"><strong>PIS / NIT / NIS</strong><span>Número do PIS (verificar no extrato do FGTS)</span></div></div>
+      <div class="doc-item obrig"><div class="doc-num">05</div><div class="doc-info"><strong>Comprovante de Residência</strong><span>Conta de água, luz ou gás — últimos 90 dias</span></div></div>
+      <div class="doc-item obrig"><div class="doc-num">06</div><div class="doc-info"><strong>Foto 3x4 recente</strong><span>Fundo branco, rosto visível</span></div></div>
+      <div class="doc-item"><div class="doc-num">07</div><div class="doc-info"><strong>Título de Eleitor</strong><span>Frente e verso + comprovante de votação</span></div></div>
+      <div class="doc-item"><div class="doc-num">08</div><div class="doc-info"><strong>Certidão de Nascimento / Casamento</strong><span>Conforme estado civil</span></div></div>
+      <div class="doc-item"><div class="doc-num">09</div><div class="doc-info"><strong>Certificado de Reservista</strong><span>Obrigatório para homens até 45 anos</span></div></div>
+      <div class="doc-item"><div class="doc-num">10</div><div class="doc-info"><strong>Cartão ou Dados Bancários</strong><span>Banco, agência e conta corrente</span></div></div>
+      <div class="doc-item"><div class="doc-num">11</div><div class="doc-info"><strong>Certidão de Nascimento dos Filhos</strong><span>Filhos até 21 anos — para IR e SF</span></div></div>
+      <div class="doc-item"><div class="doc-num">12</div><div class="doc-info"><strong>Atestado de Saúde Ocupacional</strong><span>ASO emitido pelo médico do trabalho</span></div></div>
+    </div>
+    <div class="docs-alert">
+      <div class="icon">ℹ️</div>
+      <p>Os documentos marcados em <strong>verde</strong> são de entrega obrigatória para efetivação do contrato. Os demais devem ser enviados sempre que aplicáveis à sua situação. Todos os arquivos devem ser enviados em <strong>PDF, JPG ou PNG</strong>, com boa resolução.</p>
+    </div>
+    <div class="docs-email">
+      <div class="icon">📧</div>
+      <p><strong>rhumanos@apabb.org.br</strong>Envie este PDF preenchido + todos os documentos para o e-mail acima, com o assunto: <em>"ADMISSÃO – [SEU NOME COMPLETO]"</em></p>
+    </div>
+    <div style="margin-top:1.5rem;text-align:center">
+      <button class="btn-nav btn-nav-primary" onclick="iniciarCadastro()" style="margin:0 auto">✏️ Iniciar preenchimento do cadastro</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESSO -->
+<div id="form-section">
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-title">Progresso do preenchimento</div>
+    <div class="progress-steps">
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="step-circle active" id="sc1">1</div></div>
+      <div class="step-line" id="sl1"></div>
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="step-circle" id="sc2">2</div></div>
+      <div class="step-line" id="sl2"></div>
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="step-circle" id="sc3">3</div></div>
+      <div class="step-line" id="sl3"></div>
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="step-circle" id="sc4">4</div></div>
+      <div class="step-line" id="sl4"></div>
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="step-circle" id="sc5">5</div></div>
+      <div class="step-line" id="sl5"></div>
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="step-circle" id="sc6">6</div></div>
+    </div>
+    <div class="steps-labels">
+      <div><span class="step-label active" id="sl-1">Identificação</span></div>
+      <div style="text-align:center"><span class="step-label" id="sl-2">Endereço</span></div>
+      <div style="text-align:center"><span class="step-label" id="sl-3">Contratação</span></div>
+      <div style="text-align:center"><span class="step-label" id="sl-4">Banco & VT</span></div>
+      <div style="text-align:center"><span class="step-label" id="sl-5">Dependentes</span></div>
+      <div style="text-align:right"><span class="step-label" id="sl-6">Raça/Cor</span></div>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="form-card" id="form-card">
+
+    <!-- STEP 1: Identificação -->
+    <div class="form-step active" id="step-1">
+      <div class="form-card-header">
+        <div class="step-badge">1</div>
+        <div><h3>Dados de Identificação</h3><p>Informações pessoais e documentos</p></div>
+      </div>
+      <div class="form-body">
+        <div class="fields-grid">
+          <div class="field field-full">
+            <label>Nome completo <span class="req">*</span></label>
+            <input type="text" id="nome" placeholder="Digite seu nome completo" autocomplete="name">
+            <span class="field-err" id="err-nome">Campo obrigatório</span>
+          </div>
+          <div class="field">
+            <label>CPF <span class="req">*</span></label>
+            <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
+            <span class="field-err" id="err-cpf">CPF inválido</span>
+          </div>
+          <div class="field">
+            <label>RG <span class="req">*</span></label>
+            <input type="text" id="rg" placeholder="00.000.000-0">
+          </div>
+          <div class="field">
+            <label>Órgão emissor / UF</label>
+            <input type="text" id="rg-emissor" placeholder="SSP/SP">
+          </div>
+          <div class="field">
+            <label>Data de nascimento <span class="req">*</span></label>
+            <input type="date" id="data-nasc">
+            <span class="field-err" id="err-nasc">Campo obrigatório</span>
+          </div>
+          <div class="field">
+            <label>Sexo <span class="req">*</span></label>
+            <select id="sexo">
+              <option value="">Selecione...</option>
+              <option>Masculino</option>
+              <option>Feminino</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Estado civil</label>
+            <select id="estado-civil">
+              <option value="">Selecione...</option>
+              <option>Solteiro(a)</option>
+              <option>Casado(a)</option>
+              <option>Divorciado(a)</option>
+              <option>Viúvo(a)</option>
+              <option>União Estável</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tipo sanguíneo</label>
+            <select id="tipo-sang">
+              <option value="">Selecione...</option>
+              <option>A+</option><option>A−</option>
+              <option>B+</option><option>B−</option>
+              <option>AB+</option><option>AB−</option>
+              <option>O+</option><option>O−</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Nome da mãe</label>
+            <input type="text" id="mae" placeholder="Nome completo da mãe">
+          </div>
+          <div class="field">
+            <label>Nome do pai</label>
+            <input type="text" id="pai" placeholder="Nome completo do pai">
+          </div>
+        </div>
+
+        <div class="section-divider">Documentos complementares</div>
+        <div class="fields-grid col3">
+          <div class="field">
+            <label>Nº PIS / NIT / NIS</label>
+            <input type="text" id="pis" placeholder="000.00000.00-0">
+            <span class="field-hint">Verificar no extrato FGTS</span>
+          </div>
+          <div class="field">
+            <label>CTPS — Número</label>
+            <input type="text" id="ctps-num" placeholder="00000">
+          </div>
+          <div class="field">
+            <label>CTPS — Série / UF</label>
+            <input type="text" id="ctps-serie" placeholder="000/SP">
+          </div>
+          <div class="field">
+            <label>Título de eleitor</label>
+            <input type="text" id="titulo" placeholder="Número do título">
+          </div>
+          <div class="field">
+            <label>Certificado de reservista</label>
+            <input type="text" id="reservista" placeholder="Número (se aplicável)">
+          </div>
+          <div class="field">
+            <label>Naturalidade</label>
+            <input type="text" id="naturalidade" placeholder="Cidade / UF">
+          </div>
+        </div>
+
+        <div class="section-divider">Contato</div>
+        <div class="fields-grid">
+          <div class="field">
+            <label>Celular / WhatsApp <span class="req">*</span></label>
+            <input type="tel" id="celular" placeholder="(11) 99999-0000">
+            <span class="field-err" id="err-cel">Campo obrigatório</span>
+          </div>
+          <div class="field">
+            <label>E-mail <span class="req">*</span></label>
+            <input type="email" id="email" placeholder="seuemail@email.com">
+            <span class="field-err" id="err-email">E-mail inválido</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn-nav btn-nav-secondary" onclick="voltarDocs()">← Documentos</button>
+        <button class="btn-nav btn-nav-primary" onclick="proxPasso(1)">Próximo: Endereço →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Endereço -->
+    <div class="form-step" id="step-2">
+      <div class="form-card-header">
+        <div class="step-badge">2</div>
+        <div><h3>Endereço Residencial</h3><p>Conforme comprovante de residência</p></div>
+      </div>
+      <div class="form-body">
+        <div class="fields-grid">
+          <div class="field">
+            <label>CEP <span class="req">*</span></label>
+            <input type="text" id="cep" placeholder="00000-000" maxlength="9" oninput="buscarCep(this.value)">
+            <span class="field-hint">Digite o CEP para preenchimento automático</span>
+          </div>
+          <div class="field">
+            <label>Logradouro <span class="req">*</span></label>
+            <input type="text" id="logradouro" placeholder="Rua, Avenida, etc.">
+          </div>
+          <div class="field">
+            <label>Número <span class="req">*</span></label>
+            <input type="text" id="numero" placeholder="Nº">
+          </div>
+          <div class="field">
+            <label>Complemento</label>
+            <input type="text" id="complemento" placeholder="Apto, Bloco, Casa...">
+          </div>
+          <div class="field">
+            <label>Bairro <span class="req">*</span></label>
+            <input type="text" id="bairro" placeholder="Bairro">
+          </div>
+          <div class="field">
+            <label>Cidade <span class="req">*</span></label>
+            <input type="text" id="cidade" placeholder="Cidade">
+          </div>
+          <div class="field">
+            <label>Estado <span class="req">*</span></label>
+            <select id="estado">
+              <option value="">Selecione...</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+              <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+              <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+              <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+              <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+              <option selected>SP</option><option>SE</option><option>TO</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn-nav btn-nav-secondary" onclick="voltarPasso(2)">← Voltar</button>
+        <button class="btn-nav btn-nav-primary" onclick="proxPasso(2)">Próximo: Contratação →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Contratação -->
+    <div class="form-step" id="step-3">
+      <div class="form-card-header">
+        <div class="step-badge">3</div>
+        <div><h3>Dados de Contratação</h3><p>Cargo, salário e horário de trabalho</p></div>
+      </div>
+      <div class="form-body">
+        <div class="fields-grid">
+          <div class="field field-full">
+            <label>Cargo / Função <span class="req">*</span></label>
+            <input type="text" id="cargo" placeholder="Ex.: Auxiliar Administrativo, Recepcionista...">
+            <span class="field-err" id="err-cargo">Campo obrigatório</span>
+          </div>
+          <div class="field">
+            <label>Núcleo / Unidade</label>
+            <input type="text" id="nucleo" placeholder="Núcleo onde atuará">
+          </div>
+          <div class="field">
+            <label>Data de admissão <span class="req">*</span></label>
+            <input type="date" id="admissao">
+            <span class="field-err" id="err-admissao">Campo obrigatório</span>
+          </div>
+          <div class="field">
+            <label>Salário bruto (R$) <span class="req">*</span></label>
+            <input type="text" id="salario" placeholder="0.000,00">
+            <span class="field-err" id="err-salario">Campo obrigatório</span>
+          </div>
+          <div class="field">
+            <label>Horário de entrada</label>
+            <input type="time" id="hora-entrada">
+          </div>
+          <div class="field">
+            <label>Horário de saída</label>
+            <input type="time" id="hora-saida">
+          </div>
+          <div class="field field-full">
+            <label>Horário de trabalho (descrição)</label>
+            <input type="text" id="horario" placeholder="Ex.: Segunda a Sexta, 08h00 às 17h00 com 1h de almoço">
+          </div>
+          <div class="field">
+            <label>Recebe Seguro Desemprego?</label>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="seg-desemp" value="Sim"> <span>Sim</span></label>
+              <label class="radio-opt"><input type="radio" name="seg-desemp" value="Não" checked> <span>Não</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn-nav btn-nav-secondary" onclick="voltarPasso(3)">← Voltar</button>
+        <button class="btn-nav btn-nav-primary" onclick="proxPasso(3)">Próximo: Banco & VT →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Banco & VT -->
+    <div class="form-step" id="step-4">
+      <div class="form-card-header">
+        <div class="step-badge">4</div>
+        <div><h3>Dados Bancários e Vale Transporte</h3><p>Para pagamento de salário e benefícios</p></div>
+      </div>
+      <div class="form-body">
+        <div class="section-divider">Conta bancária</div>
+        <div class="fields-grid col3">
+          <div class="field">
+            <label>Banco <span class="req">*</span></label>
+            <select id="banco">
+              <option value="">Selecione...</option>
+              <option>Banco do Brasil (001)</option>
+              <option>Bradesco (237)</option>
+              <option>Caixa Econômica (104)</option>
+              <option>Itaú Unibanco (341)</option>
+              <option>Santander (033)</option>
+              <option>Nubank (260)</option>
+              <option>Inter (077)</option>
+              <option>C6 Bank (336)</option>
+              <option>Sicredi (748)</option>
+              <option>Outro</option>
+            </select>
+            <span class="field-err" id="err-banco">Campo obrigatório</span>
+          </div>
+          <div class="field">
+            <label>Agência</label>
+            <input type="text" id="agencia" placeholder="0000-0">
+          </div>
+          <div class="field">
+            <label>Conta corrente</label>
+            <input type="text" id="conta" placeholder="00000-0">
+          </div>
+        </div>
+        <div style="margin-top:.5rem">
+          <div class="field" style="max-width:320px">
+            <label>Tipo de conta</label>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="tipo-conta" value="Corrente" checked> <span>Corrente</span></label>
+              <label class="radio-opt"><input type="radio" name="tipo-conta" value="Poupança"> <span>Poupança</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-divider" style="margin-top:1.8rem">Vale Transporte</div>
+        <div class="field">
+          <label>Vai utilizar Vale Transporte? <span class="req">*</span></label>
+          <div class="radio-group" style="max-width:320px">
+            <label class="radio-opt"><input type="radio" name="vt" value="Sim" onchange="toggleVT(this)"> <span>Sim</span></label>
+            <label class="radio-opt"><input type="radio" name="vt" value="Não" checked onchange="toggleVT(this)"> <span>Não</span></label>
+          </div>
+        </div>
+        <div class="vt-extra" id="vt-extra">
+          <div class="fields-grid">
+            <div class="field">
+              <label>Valor diário do VT (R$)</label>
+              <input type="text" id="vt-valor" placeholder="0,00">
+              <span class="field-hint">Soma das passagens de ida e volta</span>
+            </div>
+            <div class="field">
+              <label>Linha(s) de ônibus / metrô</label>
+              <input type="text" id="vt-linha" placeholder="Ex.: 7308, SPTrans, EMTU...">
+            </div>
+            <div class="field field-full">
+              <label>Observações sobre o trajeto</label>
+              <textarea id="vt-obs" placeholder="Descreva o trajeto ou linhas utilizadas..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn-nav btn-nav-secondary" onclick="voltarPasso(4)">← Voltar</button>
+        <button class="btn-nav btn-nav-primary" onclick="proxPasso(4)">Próximo: Dependentes →</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: Dependentes -->
+    <div class="form-step" id="step-5">
+      <div class="form-card-header">
+        <div class="step-badge">5</div>
+        <div><h3>Dependentes</h3><p>Para declaração de IR e Salário Família (opcional)</p></div>
+      </div>
+      <div class="form-body">
+        <div style="background:var(--cinza);border:1px solid var(--borda);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.82rem;color:var(--label);line-height:1.6">
+          Informe os dependentes para fins de <strong>Imposto de Renda (IR)</strong> e/ou <strong>Salário Família (SF)</strong>. Filhos até 21 anos (ou até 24 em faculdade). Cônjuge não declarado no próprio IR.
+        </div>
+
+        <div class="field" style="margin-bottom:1rem">
+          <label>Possui dependentes?</label>
+          <div class="radio-group" style="max-width:320px">
+            <label class="radio-opt"><input type="radio" name="tem-dep" value="Sim" onchange="toggleDep(this)"> <span>Sim</span></label>
+            <label class="radio-opt"><input type="radio" name="tem-dep" value="Não" checked onchange="toggleDep(this)"> <span>Não</span></label>
+          </div>
+        </div>
+
+        <div id="dep-container" style="display:none">
+          <div class="dep-list" id="dep-list"></div>
+          <div style="margin-top:.8rem">
+            <button class="btn-add-dep" onclick="adicionarDep()">+ Adicionar dependente</button>
+          </div>
+        </div>
+
+        <div class="section-divider" style="margin-top:1.5rem">Observações gerais</div>
+        <div class="field">
+          <label>Observações adicionais</label>
+          <textarea id="obs" placeholder="Alguma informação adicional relevante para o RH..."></textarea>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn-nav btn-nav-secondary" onclick="voltarPasso(5)">← Voltar</button>
+        <button class="btn-nav btn-nav-primary" onclick="proxPasso(5)">Próximo: Raça/Cor →</button>
+      </div>
+    </div>
+
+
+    <!-- STEP 6: Raça/Cor + Escolaridade (eSocial) -->
+    <div class="form-step" id="step-6">
+      <div class="form-card-header" style="background:linear-gradient(135deg,#4A1D8C,#6B3DB8)">
+        <div class="step-badge">6</div>
+        <div><h3>Declaração Racial/Étnica e Escolaridade</h3><p>Obrigatório pelo eSocial — autodeclaração do colaborador</p></div>
+      </div>
+      <div class="form-body">
+        <div style="background:#F3EFFF;border:1px solid #C4B5F7;border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.4rem;display:flex;gap:.8rem;align-items:flex-start">
+          <span style="font-size:1.1rem;flex-shrink:0">⚖️</span>
+          <p style="font-size:.82rem;color:#3B1A7A;line-height:1.6">Esta declaração é <strong>obrigatória pelo eSocial (campo raçaCor)</strong> conforme legislação trabalhista brasileira. A autodeclaração é um direito do trabalhador e as informações são utilizadas exclusivamente para fins legais e estatísticos.</p>
+        </div>
+
+        <div class="section-divider">Raça / Cor — autodeclaração</div>
+        <div class="field" style="margin-bottom:1.2rem">
+          <label>Como você se autodeclara? <span class="req">*</span></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.4rem" id="raca-group">
+            <label class="radio-opt" id="raca-1"><input type="radio" name="raca" value="1"> <div><span style="font-size:.84rem;font-weight:700;display:block">Branco(a)</span><span style="font-size:.7rem;color:var(--label)">Código eSocial: 1</span></div></label>
+            <label class="radio-opt" id="raca-2"><input type="radio" name="raca" value="2"> <div><span style="font-size:.84rem;font-weight:700;display:block">Preto(a)</span><span style="font-size:.7rem;color:var(--label)">Código eSocial: 2</span></div></label>
+            <label class="radio-opt" id="raca-3"><input type="radio" name="raca" value="3"> <div><span style="font-size:.84rem;font-weight:700;display:block">Pardo(a)</span><span style="font-size:.7rem;color:var(--label)">Código eSocial: 3</span></div></label>
+            <label class="radio-opt" id="raca-4"><input type="radio" name="raca" value="4"> <div><span style="font-size:.84rem;font-weight:700;display:block">Amarelo(a)</span><span style="font-size:.7rem;color:var(--label)">Código eSocial: 4</span></div></label>
+            <label class="radio-opt" id="raca-5"><input type="radio" name="raca" value="5"> <div><span style="font-size:.84rem;font-weight:700;display:block">Indígena</span><span style="font-size:.7rem;color:var(--label)">Código eSocial: 5</span></div></label>
+            <label class="radio-opt" id="raca-6"><input type="radio" name="raca" value="6"> <div><span style="font-size:.84rem;font-weight:700;display:block">Não informado</span><span style="font-size:.7rem;color:var(--label)">Código eSocial: 6</span></div></label>
+          </div>
+          <span class="field-err" id="err-raca" style="display:none">Por favor, selecione uma opção</span>
+          <span class="field-hint" style="margin-top:.5rem">Classificação conforme o IBGE e tabela do eSocial</span>
+        </div>
+
+        <div class="section-divider">Grau de instrução — obrigatório eSocial</div>
+        <div class="field" style="margin-bottom:1.2rem">
+          <label>Escolaridade <span class="req">*</span></label>
+          <select id="escolaridade">
+            <option value="">Selecione...</option>
+            <option value="01">01 — Analfabeto</option>
+            <option value="02">02 — Até 5º ano incompleto (Antigo Primário ou 4ª série)</option>
+            <option value="03">03 — 5º ano completo (Antigo Primário ou 4ª série)</option>
+            <option value="04">04 — Do 6º ao 9º ano do Ensino Fundamental incompleto</option>
+            <option value="05">05 — Ensino Fundamental completo</option>
+            <option value="06">06 — Ensino Médio incompleto</option>
+            <option value="07">07 — Ensino Médio completo</option>
+            <option value="08">08 — Educação Superior incompleta</option>
+            <option value="09">09 — Educação Superior completa</option>
+            <option value="10">10 — Pós-Graduação completa</option>
+            <option value="11">11 — Mestrado completo</option>
+            <option value="12">12 — Doutorado completo</option>
+          </select>
+          <span class="field-err" id="err-esc">Campo obrigatório</span>
+        </div>
+
+        <div class="section-divider">Pessoa com Deficiência (PcD)</div>
+        <div class="fields-grid">
+          <div class="field">
+            <label>Possui alguma deficiência?</label>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="pcd" value="Sim" onchange="togglePcd(this)"> <span>Sim</span></label>
+              <label class="radio-opt"><input type="radio" name="pcd" value="Não" checked onchange="togglePcd(this)"> <span>Não</span></label>
+            </div>
+          </div>
+        </div>
+        <div id="pcd-extra" style="display:none;margin-top:.8rem;animation:fadeIn .3s">
+          <div class="fields-grid">
+            <div class="field">
+              <label>Tipo de deficiência</label>
+              <select id="pcd-tipo">
+                <option value="">Selecione...</option>
+                <option>Física</option>
+                <option>Visual</option>
+                <option>Auditiva</option>
+                <option>Mental/Intelectual</option>
+                <option>Múltipla</option>
+                <option>Reabilitado</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Possui laudo médico?</label>
+              <div class="radio-group">
+                <label class="radio-opt"><input type="radio" name="laudo" value="Sim"> <span>Sim</span></label>
+                <label class="radio-opt"><input type="radio" name="laudo" value="Não" checked> <span>Não</span></label>
+              </div>
+            </div>
+            <div class="field field-full">
+              <label>CID / Descrição da deficiência</label>
+              <input type="text" id="pcd-cid" placeholder="Ex.: CID F70 — Retardo mental leve">
+            </div>
+          </div>
+        </div>
+
+        <div class="section-divider" style="margin-top:1.8rem">Outro vínculo empregatício</div>
+        <div class="fields-grid">
+          <div class="field">
+            <label>Possui outro emprego / vínculo CLT?</label>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="outro-vinculo" value="Sim"> <span>Sim</span></label>
+              <label class="radio-opt"><input type="radio" name="outro-vinculo" value="Não" checked> <span>Não</span></label>
+            </div>
+            <span class="field-hint">Importante para cálculo de INSS e IRRF</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="form-nav">
+        <button class="btn-nav btn-nav-secondary" onclick="voltarPasso(6)">← Voltar</button>
+        <button class="btn-nav btn-nav-primary" onclick="enviarFormulario()" style="background:var(--verde)">✅ Finalizar cadastro</button>
+      </div>
+    </div>
+
+  </div><!-- /form-card -->
+</div><!-- /form-section -->
+
+<!-- SUCESSO -->
+<div id="success-screen">
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <h3>Cadastro enviado com sucesso!</h3>
+    <p>Suas informações foram registradas. O próximo passo é enviar os documentos físicos e digitalizados para o e-mail do RH.</p>
+    <div class="success-steps">
+      <div class="success-step"><div class="num">1</div><div><strong>Reúna os documentos</strong><span>Todos os listados na página anterior</span></div></div>
+      <div class="success-step"><div class="num">2</div><div><strong>Digitalize em PDF/JPG</strong><span>Arquivos legíveis e de boa qualidade</span></div></div>
+      <div class="success-step"><div class="num">3</div><div><strong>Envie pelo e-mail</strong><span>Com assunto: ADMISSÃO – SEU NOME</span></div></div>
+      <div class="success-step"><div class="num">4</div><div><strong>Aguarde o contato</strong><span>O RH retornará em até 2 dias úteis</span></div></div>
+    </div>
+    <div class="email-box">
+      <div class="icon">📧</div>
+      <div><strong>rhumanos@apabb.org.br</strong><span>Envie os documentos para este endereço</span></div>
+    </div>
+
+    <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--borda)">
+      <p style="font-size:.82rem;color:var(--label);margin-bottom:1rem">Salve uma cópia do seu cadastro preenchido para seus arquivos pessoais:</p>
+      <button onclick="salvarPDF()" style="padding:.8rem 2rem;background:var(--azul);color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+        🖨️ Salvar / Imprimir como PDF
+      </button>
+      <p style="font-size:.72rem;color:var(--label);margin-top:.6rem">Na janela que abrir, escolha <strong>"Salvar como PDF"</strong> como destino de impressão</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p><strong>APABB — Associação de Pais, Amigos e Pessoas com Deficiência de Funcionários do Banco do Brasil</strong><br>
+  Departamento de Recursos Humanos · rhumanos@apabb.org.br<br>
+  Este formulário é de uso exclusivo do RH APABB</p>
+</footer>
+
+<script>
+let passoAtual = 0;
+let depCount = 0;
+
+/* ── NAVEGAÇÃO INICIAL ── */
+function mostrarDocumentos(){
+  const sec = document.getElementById('docs-section');
+  sec.style.display='block';
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function iniciarCadastro(){
+  document.getElementById('docs-section').style.display='none';
+  document.getElementById('progress-wrap').style.display='block';
+  document.getElementById('form-card').style.display='block';
+  document.getElementById('form-section').scrollIntoView({behavior:'smooth',block:'start'});
+  passoAtual=1;
+  atualizarProgresso(1);
+}
+
+function voltarDocs(){
+  document.getElementById('form-card').style.display='none';
+  document.getElementById('progress-wrap').style.display='none';
+  document.getElementById('docs-section').style.display='block';
+  document.getElementById('docs-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── PROGRESSO ── */
+function atualizarProgresso(n){
+  for(let i=1;i<=6;i++){
+    const sc=document.getElementById('sc'+i);
+    const sl=document.getElementById('sl-'+i);
+    if(!sc)continue;
+    if(i<n){sc.className='step-circle done';sc.innerHTML='✓';sl.className='step-label done';}
+    else if(i===n){sc.className='step-circle active';sc.innerHTML=i;sl.className='step-label active';}
+    else{sc.className='step-circle';sc.innerHTML=i;sl.className='step-label';}
+  }
+  for(let i=1;i<=5;i++){
+    const ln=document.getElementById('sl'+i);
+    if(ln) ln.className='step-line'+(i<n?' done':'');
+  }
+}
+
+/* ── VALIDAÇÃO ── */
+function validarPasso(n){
+  let ok=true;
+  const req=(id,errId)=>{
+    const el=document.getElementById(id);
+    const err=document.getElementById(errId);
+    if(!el||!el.value.trim()){if(el)el.classList.add('err');if(err)err.style.display='block';ok=false;}
+    else{el.classList.remove('err');if(err)err.style.display='none';}
+  };
+  if(n===1){
+    req('nome','err-nome');req('cpf','err-cpf');req('data-nasc','err-nasc');
+    req('celular','err-cel');
+    const em=document.getElementById('email');
+    const errEm=document.getElementById('err-email');
+    if(!em.value||!/\S+@\S+\.\S+/.test(em.value)){em.classList.add('err');errEm.style.display='block';ok=false;}
+    else{em.classList.remove('err');errEm.style.display='none';}
+  }
+  if(n===3){req('cargo','err-cargo');req('admissao','err-admissao');req('salario','err-salario');}
+  if(n===4){req('banco','err-banco');}
+  if(n===5){}
+  return ok;
+}
+
+/* ── NAVEGAÇÃO PASSOS ── */
+function proxPasso(n){
+  if(!validarPasso(n))return;
+  document.getElementById('step-'+n).classList.remove('active');
+  document.getElementById('step-'+(n+1)).classList.add('active');
+  passoAtual=n+1;
+  atualizarProgresso(n+1);
+  document.getElementById('form-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function voltarPasso(n){
+  document.getElementById('step-'+n).classList.remove('active');
+  document.getElementById('step-'+(n-1)).classList.add('active');
+  passoAtual=n-1;
+  atualizarProgresso(n-1);
+  document.getElementById('form-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── VT ── */
+function toggleVT(r){
+  document.getElementById('vt-extra').style.display = r.value==='Sim' ? 'block' : 'none';
+}
+
+/* ── DEPENDENTES ── */
+function toggleDep(r){
+  document.getElementById('dep-container').style.display = r.value==='Sim' ? 'block' : 'none';
+  if(r.value==='Sim' && document.getElementById('dep-list').children.length===0) adicionarDep();
+}
+
+function adicionarDep(){
+  depCount++;
+  const id=depCount;
+  const list=document.getElementById('dep-list');
+  const div=document.createElement('div');
+  div.className='dep-item';
+  div.id='dep-'+id;
+  div.innerHTML=`
+    <div class="dep-item-header">
+      <span>Dependente ${id}</span>
+      <button onclick="removerDep(${id})">✕ Remover</button>
+    </div>
+    <div class="dep-fields">
+      <div class="field field-full"><label>Nome completo</label><input type="text" id="dep-nome-${id}" placeholder="Nome do dependente"></div>
+      <div class="field"><label>Data de nascimento</label><input type="date" id="dep-nasc-${id}"></div>
+      <div class="field"><label>Parentesco</label>
+        <select id="dep-parent-${id}">
+          <option value="">Selecione...</option>
+          <option>Filho(a)</option><option>Cônjuge</option><option>Enteado(a)</option>
+          <option>Pai / Mãe</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="field"><label>Dependente para</label>
+        <div class="radio-group">
+          <label class="radio-opt" style="flex:unset;padding:.5rem .8rem"><input type="checkbox" id="dep-ir-${id}" style="width:14px;height:14px"> <span style="font-size:.78rem">IR</span></label>
+          <label class="radio-opt" style="flex:unset;padding:.5rem .8rem"><input type="checkbox" id="dep-sf-${id}" style="width:14px;height:14px"> <span style="font-size:.78rem">Salário Família</span></label>
+        </div>
+      </div>
+      <div class="field"><label>CPF do dependente</label><input type="text" id="dep-cpf-${id}" placeholder="000.000.000-00" maxlength="14"></div>
+    </div>`;
+  list.appendChild(div);
+}
+
+function removerDep(id){
+  const el=document.getElementById('dep-'+id);
+  if(el) el.remove();
+}
+
+/* ── CEP ── */
+async function buscarCep(v){
+  const cep=v.replace(/\D/g,'');
+  if(cep.length!==8) return;
+  try{
+    const r=await fetch('https://viacep.com.br/ws/'+cep+'/json/');
+    const d=await r.json();
+    if(!d.erro){
+      document.getElementById('logradouro').value=d.logradouro||'';
+      document.getElementById('bairro').value=d.bairro||'';
+      document.getElementById('cidade').value=d.localidade||'';
+      const sel=document.getElementById('estado');
+      for(let o of sel.options) if(o.value===d.uf){o.selected=true;break;}
+    }
+  }catch(e){}
+}
+
+/* ── MÁSCARAS ── */
+document.getElementById('cpf').addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'').slice(0,11);
+  v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1-$2');
+  this.value=v;
+});
+document.getElementById('cep').addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'').slice(0,8);
+  v=v.replace(/(\d{5})(\d)/,'$1-$2');
+  this.value=v;
+});
+document.getElementById('celular').addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'').slice(0,11);
+  v=v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2');
+  this.value=v;
+});
+
+/* ── PcD TOGGLE ── */
+function togglePcd(r){
+  document.getElementById('pcd-extra').style.display = r.value==='Sim' ? 'block' : 'none';
+}
+
+/* ── VALIDAÇÃO STEP 6 ── */
+function validarStep6(){
+  const raca = document.querySelector('input[name="raca"]:checked');
+  const esc = document.getElementById('escolaridade');
+  const errRaca = document.getElementById('err-raca');
+  const errEsc = document.getElementById('err-esc');
+  let ok = true;
+  if(!raca){errRaca.style.display='block';ok=false;}else{errRaca.style.display='none';}
+  if(!esc.value){esc.classList.add('err');errEsc.style.display='block';ok=false;}
+  else{esc.classList.remove('err');errEsc.style.display='none';}
+  return ok;
+}
+
+/* ── ENVIO ── */
+function enviarFormulario(){
+  if(!validarStep6()) return;
+  document.getElementById('form-section').style.display='none';
+  document.getElementById('success-screen').style.display='block';
+  document.getElementById('success-screen').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── SALVAR PDF ── */
+function salvarPDF(){
+  window.print();
+}
+</script>
+</body>
+</html>
